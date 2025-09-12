@@ -11,7 +11,7 @@
 } while (0)
 
 #define LinkedList_pop(first, node_out) do {      \
-    (node_out) = (first);                         \
+    if (node_out) (node_out) = (first);           \
     (first) = (first)->next;                      \
 } while (0)
 
