@@ -14,6 +14,8 @@
 int main(int argc, char* argv[]) {
     char error_msg[Error_Msg_Length] = {0};
 
+    // Dynamic Array
+    //
     if (DynamicArray_test_ensure_capacity(error_msg, Error_Msg_Length))
          printf("[PASS] DynamicArray_test_capacity()\n"); 
     else printf("[FAIL] DynamicArray_test_capacity(): %s\n", error_msg);
@@ -33,6 +35,17 @@ int main(int argc, char* argv[]) {
     if (DynamicArray_test_append_string_ptr(error_msg, Error_Msg_Length))
          printf("[PASS] DynamicArray_test_append_string_ptr()\n"); 
     else printf("[FAIL] DynamicArray_test_append_string_ptr(): %s\n", error_msg);
+
+
+    // Queue
+    // 
+    if (Queue_test_push_back(error_msg, Error_Msg_Length))
+         printf("[PASS] Queue_test_push_back()\n"); 
+    else printf("[FAIL] Queue_test_push_back(): %s\n", error_msg);
+
+    if (Queue_test_pop_front(error_msg, Error_Msg_Length))
+         printf("[PASS] Queue_test_pop_front()\n"); 
+    else printf("[FAIL] Queue_test_pop_front(): %s\n", error_msg);
 
     return 0;
 }

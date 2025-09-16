@@ -20,16 +20,33 @@
 #define Queue_Assert assert
 #endif // Queue_Assert
 
-#define QueueHeader struct { size_t head; size_t tail; size_t count; }
-#define Queue_Items_Length(items) (sizeof(items)/sizeof(items[0]))
+#define Queue(Type) struct { Type* first; Type* last; }
 
-#define Queue_init() do {} while (0)
-
-#define Queue_insert() do { \
+#define Queue_Push_Back(first, last, node, node_member_next) do {   \
+    if ((first) == NULL) {                                            \
+        (first) = (node);                                           \
+        (last)  = (node);                                           \
+        (node)->node_member_next = NULL;                            \
+        break;                                                      \
+    }                                                               \
+    (node)->node_member_next = NULL;                                \
+    (last)->node_member_next = (node);                              \
+    (last)                   = (node);                              \
 } while (0)
 
-#define Queue_remove() do {} while (0)
-#define Queue_is_full() ()
-#define Queue_is_empty() ()
+#define Queue_Pop_Front(first, last, node_member_next) do {         \
+    if ((first) == (last)) {                                        \
+        (first) = NULL;                                             \
+        (last)  = NULL;                                             \
+        break;                                                      \
+    }                                                               \
+    (first) = (first)->node_member_next;                            \
+} while (0)
+
+// Default API
+//
+#define Queue_push_back(first, last, node)  Queue_Push_Back((first), (last), (node), next)
+#define Queue_pop_front(first, last)        Queue_Pop_Front((first), (last), next)
+#define Queue_is_empty(first, last) ((first) == (last))
 
 #endif // Queue_H

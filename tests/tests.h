@@ -28,6 +28,14 @@ static const char* Gender_Text[] = {
     [Gender_Female] = "Female"
 };
 
+typedef struct Task Task;
+struct Task {
+    const char *name;
+    int         priority;
+    char        created_at[50];
+    Link(Task)  next;
+};
+
 typedef struct Person Person;
 struct Person {
     int          id;
@@ -35,13 +43,14 @@ struct Person {
     Gender       gender;
     float        height;
     Link(Person) next;
+    Queue(Task)  tasks;
 };
 
 #define __PERSON_INIT_LOCALS__                                                                          \
-    Person p1 = (Person) { .id = 1, .name = "John Doe",  .gender = Gender_Male,    .height = 1.8f };       \
-    Person p2 = (Person) { .id = 2, .name = "Jane Doe",  .gender = Gender_Female,  .height = 1.65f };    \
-    Person p3 = (Person) { .id = 3, .name = "Joana Doe", .gender = Gender_Female,  .height = 1.59f };    \
-    Person p4 = (Person) { .id = 4, .name = "Bill Doe",  .gender = Gender_Male,    .height = 2.1f };   
+    Person p1 = { .id = 1, .name = "John Doe",  .gender = Gender_Male,    .height = 1.8f };       \
+    Person p2 = { .id = 2, .name = "Jane Doe",  .gender = Gender_Female,  .height = 1.65f };    \
+    Person p3 = { .id = 3, .name = "Joana Doe", .gender = Gender_Female,  .height = 1.59f };    \
+    Person p4 = { .id = 4, .name = "Bill Doe",  .gender = Gender_Male,    .height = 2.1f };   
     
 #define Person_print(person, indent) do {                               \
     printf("%sId:      %d\n", (indent), (person).id);                   \
@@ -104,5 +113,10 @@ bool StackPointer_test_push();
 bool StackPointer_test_is_full();
 bool StackPointer_test_pop();
 bool StackPointer_test_out_of_bounds();
+
+bool Queue_test_push_back(); 
+bool Queue_test_pop_front();
+bool Queue_test_peek_front();
+bool Queue_test_peek_back();
 
 #endif // Tests_H
