@@ -88,7 +88,7 @@ bool Queue_test_pop_front(char* out_error_msg, int error_msg_length) {
     Task t2   = { .name = "Meeting with Bob and Jane",  .priority = 2,  .created_at = "2025-04-14 20:00:00" };
     Task t3   = { .name = "Create a presentation",      .priority = 6,  .created_at = "2025-04-14 09:16:00" };
     Task t4   = { .name = "Write budget report",        .priority = 8,  .created_at = "2025-04-14 12:45:00" };
-    Person p1 = { .id = 1, .name = "John Doe",  .gender = Gender_Male, .height = 1.8f };
+    Person p1 = { .id = 1, .name = "John Doe", .gender = Gender_Male, .height = 1.8f };
 
     Queue_push_back(p1.tasks.first, p1.tasks.last, &t1);
     Queue_push_back(p1.tasks.first, p1.tasks.last, &t2);

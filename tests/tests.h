@@ -10,7 +10,8 @@
 #include <stdio.h>
 #include <string.h>
 
-// DEBUG Trace
+// DEBUG 
+// 
 // #define Tests_Debug_Trace
 
 #define Stack_Items_Max 3
@@ -114,9 +115,7 @@ bool StackPointer_test_is_full();
 bool StackPointer_test_pop();
 bool StackPointer_test_out_of_bounds();
 
-bool Queue_test_push_back(); 
-bool Queue_test_pop_front();
-bool Queue_test_peek_front();
-bool Queue_test_peek_back();
+bool Queue_test_push_back(char* out_error_msg, int error_msg_length); 
+bool Queue_test_pop_front(char* out_error_msg, int error_msg_length);
 
 #endif // Tests_H
