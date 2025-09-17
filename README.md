@@ -97,6 +97,24 @@ cl main.c stack.c /link /out:main.exe
 ```
 
 ## Testing
+
+Open a terminal and follow the commands bellow:
+
+```shell
+cd tests/
+build.bat
+cd build/
+tests.exe
 ```
-...
+### Output
+Expected output:
+
+```shell
+[PASS] DynamicArray_test_capacity()
+[PASS] DynamicArray_test_append()
+[PASS] DynamicArray_test_append_many()
+[PASS] DynamicArray_test_append_strings()
+[PASS] DynamicArray_test_append_string_ptr()
+[PASS] Queue_test_push_back()
+[PASS] Queue_test_pop_front()
 ```
