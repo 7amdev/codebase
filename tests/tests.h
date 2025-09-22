@@ -14,6 +14,32 @@
 // 
 // #define Tests_Debug_Trace
 
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
+#define Return_Error_Custom(out_error_msg, error_msg_length, format, ...) do {      \
+    snprintf(                                                                           \
+        (out_error_msg), (error_msg_length),                                            \
+        "%s:%2d: error: " format,                                                       \
+        __FILENAME__, __LINE__, ##__VA_ARGS__                                             \
+    );                                                                                  \
+    return false;                                                                       \
+} while (0)
+
+#define Return_Error(format, ...)   \
+    Return_Error_Custom(out_error_msg, error_msg_length, format, ##__VA_ARGS__)
+
+#define Log_Info(format, ...)    printf("\x1b[0m[INFO] " format, __VA_ARGS__) 
+#define Log_Success(format, ...) printf("\x1b[32m[PASS] " format "\x1b[0m", ##__VA_ARGS__) 
+#define Log_Error(format, ...)   Log_Error_Buffer(error_msg, format, __VA_ARGS__)
+#define Log_Error_Buffer(error_buffer, format, ...) do {         \
+    printf("\x1b[31m[FAIL] " format "\x1b[0m", __VA_ARGS__);    \
+    if (error_buffer) *error_buffer = '\0';                     \
+} while (0)  
+
+#define Not(expr)  ((expr) == false)
+
+#define Error_Msg_Length 1024
+
 #define Stack_Items_Max 3
 
 typedef enum {
@@ -60,11 +86,15 @@ struct Person {
     printf("%sGender:  %s\n", (indent), Gender_Text[(person).gender]);  \
 } while (0)
 
-#define Person_is_equal(p1, p2) (             \
-    (p1).id == (p2).id                    &&  \
-    strcmp((p1).name, (p2).name) == 0     &&  \
-    (p1).height == (p2).height            &&  \
-    (p1).gender == (p2).gender                \
+#define Person_is_equal(p1, p2) (                   \
+    (p1).id == (p2).id                          &&  \
+    (                                               \
+        ((p1).name != NULL && (p2).name != NULL)    \
+        ? strcmp((p1).name, (p2).name) == 0         \
+        : (p1).name == (p2).name                    \
+    )                                           &&  \
+    (p1).height == (p2).height                  &&  \
+    (p1).gender == (p2).gender                      \
 )
 
 typedef struct {
@@ -92,23 +122,23 @@ typedef struct {
     Person  items[Stack_Items_Max];
 } StackPointerPerson;
 
-LinkedList(Person) first;
-
 bool DynamicArray_test_ensure_capacity(char* out_error_msg, int error_msg_length);
 bool DynamicArray_test_append(char* out_error_msg, int error_msg_length);
 bool DynamicArray_test_append_many(char* out_error_msg, int error_msg_length);
 bool DynamicArray_test_append_strings(char* out_error_msg, int error_msg_length);
 bool DynamicArray_test_append_string_ptr(char* out_error_msg, int error_msg_length);
 
-void LinkedList_test_push_and_peek();
-void LinkedList_test_peek_in_a_loop();
-void LinkedList_test_foreach();
-void LinkedList_test_loop_and_pop();
+bool LinkedList_test_push(char* out_error_msg, int error_msg_length);
+bool LinkedList_test_pop(char* out_error_msg, int error_msg_length);
+bool LinkedList_test_peek(char* out_error_msg, int error_msg_length);
+bool LinkedList_test_foreach(char* out_error_msg, int error_msg_length);
 
-bool Stack_test_push();
-bool Stack_test_pop();
-bool Stack_test_peek();
+bool Stack_test_push(char* out_error_msg, int error_msg_length);
+bool Stack_test_pop(char* out_error_msg, int error_msg_length);
+bool Stack_test_peek(char* out_error_msg, int error_msg_length);
 
+// TODO: change implementation
+//
 void StackPointer_test_init();
 bool StackPointer_test_push();
 bool StackPointer_test_is_full();

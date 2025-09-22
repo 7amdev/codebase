@@ -4,9 +4,9 @@
 // Stack
 // 
 
-static void Stack_print(StackPerson *stack) {
+static void Stack_print(StackPerson *stack, const char* indent) {
     printf("Stack State:\n");
-    printf("  Nr of elements: %d\n", stack->top);
+    printf("%sNr of elements: %d\n", indent, stack->top);
 }
 
 static void Stack_print_items(StackPerson* stack, const char* indent) {
@@ -16,75 +16,143 @@ static void Stack_print_items(StackPerson* stack, const char* indent) {
     }
 }
 
-bool Stack_test_push() {
+bool Stack_test_push(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
     StackPerson people = {0};
     Person ret = {0};
 
-    printf("----- Before push\n");
-    Stack_print(&people);
-
     Stack_push(&people, p1, &ret);
+    if (Person_is_equal(ret, p1) == false)
+        Return_Error("expected person '%s', but got '%s'.", p1.name, ret.name);
+
     Stack_push(&people, p2, &ret);
+    if (Person_is_equal(ret, p2) == false)
+        Return_Error("expected person '%s', but got '%s'.", p2.name, ret.name);
+
     Stack_push(&people, p3, &ret);
-    if(!Stack_is_full(&people)) 
-        Stack_push(&people, p4, &ret);
+    if (Person_is_equal(ret, p3) == false)
+        Return_Error("expected person '%s', but got '%s'.", p3.name, ret.name);
 
-    printf("\n----- After push\n");
-    Stack_print(&people);
-    printf("  Items:\n");
-    Stack_print_items(&people, "    ");
+    if (Stack_is_full(&people) == false) 
+        Return_Error("expected Stack to be full.", "");
 
-    if (people.top == 3) return true;
+    // NOTE: Push item only if the stack is not full
+    //
+    int stack_len = people.top;
+    if(!Stack_is_full(&people)) Stack_push(&people, p4, &ret);
+    if (people.top > stack_len) 
+        Return_Error("expected Stack items length to be %d, but got %d.", stack_len, people.top);
 
-    return false;
+    bool is_equal = true;
+    if      (!Person_is_equal(people.items[0], p1)) is_equal = false;
+    else if (!Person_is_equal(people.items[1], p2)) is_equal = false;
+    else if (!Person_is_equal(people.items[2], p3)) is_equal = false;
+    if (is_equal == false) 
+        Return_Error("Stack items differs with the inputs.");
+
+    return true;
 }
 
-bool Stack_test_pop() {
+bool Stack_test_pop(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
     StackPerson people = {0};
     Person ret          = {0};
 
-    if (!Stack_is_empty(&people))
-        Stack_pop(&people, &ret);
+    if (!Stack_is_empty(&people)) Stack_pop(&people, &ret);
     
     Stack_push(&people, p1, &ret);
     Stack_push(&people, p2, &ret);
     Stack_push(&people, p3, &ret);
 
-    printf("---- Before Pop\n");
-    Stack_print(&people);
-    printf("  Items: \n");
-    Stack_print_items(&people, "    ");
+    int top = people.top;
+    Person item_popped = {0};
+    Person top_item = {0};
 
-    printf("\n---- After Pop\n");
+    Stack_pop(&people, &item_popped);
+    Stack_peek(&people, &top_item, 0);
+    {
+        if (people.top != top - 1) 
+            Return_Error("expected '%d' items, but got '%d'.", (top - 1), people.top);
+        if (Person_is_equal(item_popped, p3) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p3.name, item_popped.name);
+        if (!Person_is_equal(top_item, p2))
+            Return_Error("expected top item's name to be '%s', but got '%s'.", p2.name, top_item.name);
+    }
 
-    Stack_pop(&people, &ret);
-    Stack_pop(&people, &ret);
-    Stack_pop(&people, &ret);
+    Stack_pop(&people, &item_popped);
+    Stack_peek(&people, &top_item, 0);
+    {
+        if (people.top != top - 2) 
+            Return_Error("expected '%d' items, but got '%d'.", (top - 2), people.top);
+        if (Person_is_equal(item_popped, p2) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p2.name, item_popped.name);
+        if (!Person_is_equal(top_item, p1))
+            Return_Error("expected top item's name to be '%s', but got '%s'.", p1.name, top_item.name);
+    }
 
-    if (!Stack_is_empty(&people))
-        Stack_pop(&people, &ret);
+    Stack_pop(&people, &item_popped);
+    {
+        if (people.top != top - 3) 
+            Return_Error("expected '%d' items, but got '%d'.", (top - 3), people.top);
+        if (Person_is_equal(item_popped, p1) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p1.name, item_popped.name);
+        if (!Stack_is_empty(&people))
+            Return_Error("expected an empty Stack, but it has '%d' item(s).", people.top);
+    }
 
-    Stack_print(&people);
+    if (Stack_is_empty(&people)) top_item = (Person) {0};
+    if (!Stack_is_empty(&people)) Stack_pop(&people, &item_popped);
+    Stack_peek(&people, &top_item, 0);
+    if (!Person_is_equal(top_item, (Person) {0})) 
+        Return_Error("expected an empty Stack, but it has '%d' item(s).", people.top);
 
-    if (people.top == 0) return true;
-
-    return false;
+    return true;
 }
 
-bool Stack_test_peek() {
+bool Stack_test_peek(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
     StackPerson people = {0};
-    Person ret          = {0};
+    Person top_item    = {0};
+
+    // TODO: Peeking on a empty state
+    Stack_peek(&people, &top_item, 0);
+    if (Person_is_equal(top_item, (Person) {0}) == false)
+        Return_Error("expected a '(null)' item, but got '%s'.", top_item.name);
 
     if (!Stack_is_empty(&people))
-        Stack_pop(&people, &ret);
+        Stack_pop(&people, &top_item);
     
-    Stack_push(&people, p1, &ret);
-    Stack_push(&people, p2, &ret);
-    Stack_push(&people, p3, &ret);
+    Stack_push(&people, p1, &top_item);
+    if (Person_is_equal(top_item, p1) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p1.name, top_item.name);
+
+    Stack_push(&people, p2, &top_item);
+    if (Person_is_equal(top_item, p2) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p2.name, top_item.name);
+
+    Stack_push(&people, p3, &top_item);
+    if (Person_is_equal(top_item, p3) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p3.name, top_item.name);
+
+    Person person = {0};
+    Stack_peek(&people, &person, 0);
+    if (Person_is_equal(top_item, p3) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p3.name, person.name);
     
+    Stack_peek(&people, &person, 1);
+    if (Person_is_equal(person, p2) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p2.name, person.name);
+
+    Stack_peek(&people, &person, 2);
+    if (Person_is_equal(person, p1) == false)
+        Return_Error("expected top item's name to be '%s', but got '%s'.", p1.name, person.name);
+    
+    person = (Person) {0};
+    Stack_peek(&people, &person, 3);
+    if (Person_is_equal(person, (Person) {0}) == false)
+        Return_Error("expected '(null)' item, but got '%s'.", person.name);
+
+#ifdef Tests_Debug_Trace
     printf("Items:\n");
     for (int i = 0; i < 10; i += 1) {
         if (Stack_is_out_of_bounds(&people, i)) {
@@ -97,8 +165,9 @@ bool Stack_test_peek() {
         Person_print(item, "  ");
         printf("\n");
     }
-    
-    return false;
+#endif   
+
+    return true;
 }
 
 bool Stack_test_out_of_bounds() {
@@ -147,7 +216,7 @@ void StackPointer_test_init() {
     assert(infos.items == infos.top && "ERROR: Stack is not initialized properly.");
 }
 
-bool StackPointer_test_push() {
+bool StackPointer_test_push(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
 
     Person ret = {0};
@@ -201,7 +270,7 @@ bool StackPointer_test_is_full() {
     return true;
 }
 
-bool StackPointer_test_pop() {
+bool StackPointer_test_pop(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
     Person ret = {0};
     StackPointerPerson infos = {0};

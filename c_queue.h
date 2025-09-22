@@ -22,31 +22,31 @@
 
 #define Queue(Type) struct { Type* first; Type* last; }
 
-#define Queue_Push_Back(first, last, node, link_name) do {   \
-    if ((first) == NULL) {                                   \
-        (first) = (node);                                    \
-        (last)  = (node);                                    \
-        (node)->link_name = NULL;                            \
-        break;                                               \
-    }                                                        \
-    (node)->link_name = NULL;                                \
-    (last)->link_name = (node);                              \
-    (last)            = (node);                              \
+#define Queue_push_back_custom(first, last, node, link_name) do {   \
+    if ((first) == NULL) {                                          \
+        (first) = (node);                                           \
+        (last)  = (node);                                           \
+        (node)->link_name = NULL;                                   \
+        break;                                                      \
+    }                                                               \
+    (node)->link_name = NULL;                                       \
+    (last)->link_name = (node);                                     \
+    (last)            = (node);                                     \
 } while (0)
 
-#define Queue_Pop_Front(first, last, link_name) do {         \
-    if ((first) == (last)) {                                 \
-        (first) = NULL;                                      \
-        (last)  = NULL;                                      \
-        break;                                               \
-    }                                                        \
-    (first) = (first)->link_name;                            \
+#define Queue_pop_front_custom(first, last, link_name) do {         \
+    if ((first) == (last)) {                                        \
+        (first) = NULL;                                             \
+        (last)  = NULL;                                             \
+        break;                                                      \
+    }                                                               \
+    (first) = (first)->link_name;                                   \
 } while (0)
 
 // Default API
 //
-#define Queue_push_back(first, last, node)  Queue_Push_Back((first), (last), (node), next)
-#define Queue_pop_front(first, last)        Queue_Pop_Front((first), (last), next)
+#define Queue_push_back(first, last, node)  Queue_push_back_custom((first), (last), (node), next)
+#define Queue_pop_front(first, last)        Queue_pop_front_custom((first), (last), next)
 #define Queue_is_empty(first, last) ((first) == (last))
 
 #endif // Queue_H

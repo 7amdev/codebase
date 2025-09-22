@@ -11,6 +11,14 @@
 #define Stack_Assert assert
 #endif // Stack_Assert
 
+// TODO: Linked List Stack 
+//
+//       LL_push_custom(stack, node, link_name)
+//       LL_push(stack, node) LLStack_Push((stack), (node), next)
+//
+//       LL_pop_custom(stack, node_out, link_name)
+//       LL_pop(stack, node_out) LLStack_Pop((stack), (node_out), next)
+
 #define Stack_Items_Length(items) (sizeof(items) / sizeof(*(items)))
 
 #define Stack_push(stack, item_in, item_out)                                    \
@@ -30,7 +38,9 @@ do {                                                                            
 
 #define Stack_peek(stack, item_out, offset)                         \
 do {                                                                \
+    if (Stack_is_empty(stack)) break;                               \
     int index = (stack)->top - 1 - (offset);                        \
+    if (index < 0) break;                                           \
     Stack_Assert(index >= 0);                                       \
     Stack_Assert(index < (stack)->top);                             \
     if ((item_out) != NULL) *(item_out) = (stack)->items[index];    \

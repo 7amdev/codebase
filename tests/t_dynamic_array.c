@@ -8,27 +8,14 @@ static void DynamicArray_print(DynamicArrayPerson* array) {
 
 bool DynamicArray_test_ensure_capacity(char* out_error_msg, int error_msg_length) {
     DynamicArrayPerson persons = {0};
-    // *out_error_msg = 0;
 
     DynamicArray_ensure_capacity(&persons, 29);
-    if (persons.capacity != DynamicArray_Initial_Capacity) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d total capacity, but got %zu.", 
-            DynamicArray_Initial_Capacity, persons.capacity
-        );
-        return false;
-    }
+    if (persons.capacity != DynamicArray_Initial_Capacity) 
+        Return_Error("expected %d total capacity, but got %zu.", DynamicArray_Initial_Capacity, persons.capacity);
 
     DynamicArray_ensure_capacity(&persons, 257);
-    if (persons.capacity != (2*DynamicArray_Initial_Capacity)) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d total capacity, but got %zu.", 
-            (2*DynamicArray_Initial_Capacity), persons.capacity
-        );
-        return false;
-    }
+    if (persons.capacity != (2*DynamicArray_Initial_Capacity)) 
+        Return_Error("expected %d total capacity, but got %zu.", (2*DynamicArray_Initial_Capacity), persons.capacity);
 
     return true;
 }
@@ -37,31 +24,18 @@ bool DynamicArray_test_append(char* out_error_msg, int error_msg_length) {
     __PERSON_INIT_LOCALS__
 
     DynamicArrayPerson persons = {0};
-    // *out_error_msg = 0;
 
     DynamicArray_append(&persons, p1);
     DynamicArray_append(&persons, p2);
 
-    if (persons.count != 2) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d items, but got %zu.", 
-            2, persons.count
-        );
-        return false;
-    }
+    if (persons.count != 2) 
+        Return_Error("Expected %d items, but got %zu.", 2, persons.count);
 
     DynamicArray_append(&persons, p3);
     DynamicArray_append(&persons, p4);
 
-    if (persons.count != 4) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d items, but got %zu.", 
-            4, persons.count
-        );
-        return false;
-    }
+    if (persons.count != 4) 
+        Return_Error("Expected %d items, but got %zu.", 4, persons.count);
 
 #ifdef Tests_Debug_Trace
     printf("DynamicArray_test_append: ----------------------------\n");
@@ -101,45 +75,17 @@ bool DynamicArray_test_append_many(char* out_error_msg, int error_msg_length) {
     DynamicArray_append(&persons, p3);
     DynamicArray_append(&persons, p4);
     
-    if (persons.count != 6) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d items, but got %zu.", 
-            6, persons.count
-        );
+    if (persons.count != 6) 
+        Return_Error("Expected %d items, but got %zu.", 6, persons.count);
 
-        return false;
-    }
+    if (persons.capacity != 256) 
+        Return_Error("Expected %d items, but got %zu.", 256, persons.capacity);
 
-    if (persons.capacity != 256) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d items, but got %zu.", 
-            256, persons.capacity
-        );
+    if (Person_is_equal(persons.items[2], new_persons[0]) == false) 
+        Return_Error("Expected Person name '%s', but got '%s' at index '2'.", new_persons[0].name, persons.items[2].name);
 
-        return false;
-    }
-
-    if (Person_is_equal(persons.items[2], new_persons[0]) == false) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected Person name '%s', but got '%s' at index '2'.", 
-            new_persons[0].name, persons.items[2].name
-        );
-
-        return false;
-    }
-
-    if (Person_is_equal(persons.items[3], new_persons[1]) == false) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected Person name '%s', but got '%s' at index '2'.", 
-            new_persons[1].name, persons.items[3].name
-        );
-
-        return false;
-    }
+    if (Person_is_equal(persons.items[3], new_persons[1]) == false) 
+        Return_Error("Expected Person name '%s', but got '%s' at index '2'.", new_persons[1].name, persons.items[3].name);
 
 #ifdef Tests_Debug_Trace
     printf("DynamicArray_test_append_many: ----------------------------\n");
@@ -173,45 +119,17 @@ bool DynamicArray_test_append_strings(char* out_error_msg, int error_msg_length)
     DynamicArray_append_many(&strings, text_null,  sizeof(text_null)  - 1);
 
     int s_length = strlen(strings.items);
-    if (s_length != expected_length) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected length '%d', but got '%d'.", 
-            expected_length, s_length
-        );
+    if (s_length != expected_length) 
+        Return_Error("Expected length '%d', but got '%d'.", expected_length, s_length);
 
-        return false;
-    }
+    if (strings.count != expected_sizeof) 
+        Return_Error("expected a size '%d', but got '%zu'.", expected_sizeof, strings.count);
 
-    if (strings.count != expected_sizeof) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected a size '%d', but got '%zu'.", 
-            expected_sizeof, strings.count
-        );
+    if (strcmp(strings.items, expected) != 0) 
+        Return_Error("Expected string '%s', but got '%s'.", expected, strings.items);
 
-        return false;
-    }
-
-    if (strcmp(strings.items, expected) != 0) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected string '%s', but got '%s'.", 
-            expected, strings.items
-        );
-
-        return false;
-    }
-
-    if (strings.capacity != 256) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected a capacity of %d, but got %zu.", 
-            256, strings.capacity
-        );
-
-        return false;
-    }
+    if (strings.capacity != 256) 
+        Return_Error("Expected a capacity of %d, but got %zu.", 256, strings.capacity);
 
 #ifdef Tests_Debug_Trace
     printf("DynamicArray_test_append_strings: ----------------------------\n");
@@ -246,15 +164,8 @@ bool DynamicArray_test_append_string_ptr(char* out_error_msg, int error_msg_leng
         DynamicArray_append(&string_pointers, expected[i]);
     }
 
-    if (string_pointers.count != expected_length) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected %d items, but got %zu.", 
-            expected_length, string_pointers.count
-        );
-
-        return false;
-    }
+    if (string_pointers.count != expected_length) 
+        Return_Error("Expected %d items, but got %zu.", expected_length, string_pointers.count);
 
     bool is_equal = true;
     int i = 0;
@@ -270,25 +181,11 @@ bool DynamicArray_test_append_string_ptr(char* out_error_msg, int error_msg_leng
         } 
     }
 
-    if (is_equal == false) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-             "Expected '%s' at index '%d', but got '%s'.", 
-            expected[i], i, string_pointers.items[i]
-        );
+    if (is_equal == false) 
+        Return_Error("Expected '%s' at index '%d', but got '%s'.", expected[i], i, string_pointers.items[i]);
 
-        return false;
-    }
-
-    if (string_pointers.capacity != 256) {
-        snprintf(
-            out_error_msg, error_msg_length, 
-            "Expected a capacity of %d, but got %zu.", 
-            256, string_pointers.capacity
-        );
-
-        return false;
-    }
+    if (string_pointers.capacity != 256) 
+        Return_Error("Expected a capacity of %d, but got %zu.", 256, string_pointers.capacity);
 
 #ifdef Tests_Debug_Trace
     printf("DynamicArray_test_append_string_ptr: ----------------------------\n");
