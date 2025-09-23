@@ -139,11 +139,11 @@ bool Stack_test_peek(char* out_error_msg, int error_msg_length);
 
 // TODO: change implementation
 //
-void StackPointer_test_init();
-bool StackPointer_test_push();
-bool StackPointer_test_is_full();
-bool StackPointer_test_pop();
-bool StackPointer_test_out_of_bounds();
+bool StackPointer_test_init(char* out_error_msg, int error_msg_length);
+bool StackPointer_test_push(char* out_error_msg, int error_msg_length);
+bool StackPointer_test_pop(char* out_error_msg, int error_msg_length);
+bool StackPointer_test_is_full(char* out_error_msg, int error_msg_length);
+bool StackPointer_test_out_of_bounds(char* out_error_msg, int error_msg_length);
 
 bool Queue_test_push_back(char* out_error_msg, int error_msg_length); 
 bool Queue_test_pop_front(char* out_error_msg, int error_msg_length);

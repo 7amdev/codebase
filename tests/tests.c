@@ -29,6 +29,26 @@ int main(int argc, char* argv[]) {
     else 
         Log_Error("Stack_test_peek() - %s\n", error_msg);  
 
+    if (StackPointer_test_push(error_msg, Error_Msg_Length)) 
+        Log_Success("StackPointer_test_push()\n");
+    else 
+        Log_Error("StackPointer_test_push() - %s\n", error_msg);  
+
+    if (StackPointer_test_pop(error_msg, Error_Msg_Length)) 
+        Log_Success("StackPointer_test_pop()\n");
+    else 
+        Log_Error("StackPointer_test_pop() - %s\n", error_msg);  
+
+    if (StackPointer_test_out_of_bounds(error_msg, Error_Msg_Length)) 
+        Log_Success("StackPointer_test_out_of_bounds()\n");
+    else 
+        Log_Error("StackPointer_test_out_of_bounds() - %s\n", error_msg);  
+
+    if (StackPointer_test_is_full(error_msg, Error_Msg_Length)) 
+        Log_Success("StackPointer_test_is_full()\n");
+    else 
+        Log_Error("StackPointer_test_is_full() - %s\n", error_msg);  
+
     // Dynamic Array
     //
     if (DynamicArray_test_ensure_capacity(error_msg, Error_Msg_Length))
