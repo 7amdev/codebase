@@ -108,7 +108,7 @@ bool DynamicArray_test_append_strings(char* out_error_msg, int error_msg_length)
     char text_hello[]       = "Hello, ";
     char text_world[]       = "world";
     char text_end[]         = "!";
-    char text_null[]        = "\0";
+    char text_null[]        = "";
     const char expected[]   = "Hello, world!";
     int expected_length     = strlen(expected);
     int expected_sizeof     = sizeof(expected);
@@ -116,7 +116,7 @@ bool DynamicArray_test_append_strings(char* out_error_msg, int error_msg_length)
     DynamicArray_append_many(&strings, text_hello, sizeof(text_hello) - 1);
     DynamicArray_append_many(&strings, text_world, sizeof(text_world) - 1);
     DynamicArray_append_many(&strings, text_end,   sizeof(text_end)   - 1);
-    DynamicArray_append_many(&strings, text_null,  sizeof(text_null)  - 1);
+    DynamicArray_append_many(&strings, text_null,  sizeof(text_null));
 
     int s_length = strlen(strings.items);
     if (s_length != expected_length) 
@@ -134,11 +134,11 @@ bool DynamicArray_test_append_strings(char* out_error_msg, int error_msg_length)
 #ifdef Tests_Debug_Trace
     printf("DynamicArray_test_append_strings: ----------------------------\n");
     printf("\n");
-    printf("Dynamic Array of 'String': %s\n", strings.items);
+    printf("Dynamic Array of 'Characters': %s\n", strings.items);
     printf("  count:    %zu\n", strings.count);
     printf("  capacity: %zu\n", strings.capacity);
     printf("\n");
-    printf("Strings:\n");
+    printf("String characters:\n");
     DynamicArray_foreach(char, &strings, string) {
         printf("  Character #%zu: '%c'\n", string.i, *string.item);
     }
@@ -200,6 +200,106 @@ bool DynamicArray_test_append_string_ptr(char* out_error_msg, int error_msg_leng
     }
     printf("-------------------------------------------------------\n");
 #endif
+
+    return true;
+}
+
+bool DynamicArray_test_push(char* out_error_msg, int error_msg_length) {
+    __PERSON_INIT_LOCALS__
+    DynamicArrayPerson persons = {0};
+
+    DynamicArray_push(&persons, p1);
+    DynamicArray_push(&persons, p2);
+
+    if (persons.count != 2) 
+        Return_Error("Expected %d items, but got %zu.", 2, persons.count);
+
+    DynamicArray_push(&persons, p3);
+    DynamicArray_push(&persons, p4);
+
+    if (persons.count != 4) 
+        Return_Error("Expected %d items, but got %zu.", 4, persons.count);
+
+#ifdef Tests_Debug_Trace
+    printf("DynamicArray_test_push: ----------------------------\n");
+    DynamicArray_print(&persons);
+    printf("\nPersons:\n");
+    DynamicArray_foreach(Person, &persons, person) {
+        printf("  Person #%zu: \n", person.i);
+        printf("    Id:      %d\n", person.item->id);
+        printf("    Name:    %s\n", person.item->name);
+        printf("    Height:  %f\n", person.item->height);
+        printf("    Gender:  %s\n", person.item->gender == Gender_Male ? "Male" : "Female");
+    }
+    printf("-------------------------------------------------------\n");
+#endif // Tests_Debug_Trace
+
+    return true;
+}
+
+bool DynamicArray_test_pop(char* out_error_msg, int error_msg_length) {
+    __PERSON_INIT_LOCALS__
+    DynamicArrayPerson persons = {0};
+
+    DynamicArray_push(&persons, p1);
+    DynamicArray_push(&persons, p2);
+    DynamicArray_push(&persons, p3);
+
+    if (persons.count != 3) 
+        Return_Error("Expected %d items, but got %zu.", 4, persons.count);
+
+    int count = persons.count;
+    Person item_popped = {0};
+    Person top_item = {0};
+    
+    DynamicArray_pop(&persons, &item_popped);
+    top_item = persons.items[persons.count - 1];
+    {
+        if (persons.count != count - 1) 
+            Return_Error("expected '%d' items, but got '%zu'.", (count - 1), persons.count);
+        if (Person_is_equal(item_popped, p3) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p3.name, item_popped.name);
+        if (!Person_is_equal(top_item, p2))
+            Return_Error("expected top item's name to be '%s', but got '%s'.", p2.name, top_item.name);
+    }
+
+    DynamicArray_pop(&persons, &item_popped);
+    top_item = persons.items[persons.count - 1];
+    {
+        if (persons.count != count - 2) 
+            Return_Error("expected '%d' items, but got '%zu'.", (count - 2), persons.count);
+        if (Person_is_equal(item_popped, p2) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p2.name, item_popped.name);
+        if (!Person_is_equal(top_item, p1))
+            Return_Error("expected top item's name to be '%s', but got '%s'.", p1.name, top_item.name);
+    }
+
+    DynamicArray_pop(&persons, &item_popped);
+    {
+        if (persons.count != count - 3) 
+            Return_Error("expected '%d' items, but got '%zu'.", (count - 3), persons.count);
+        if (Person_is_equal(item_popped, p1) == false)
+            Return_Error("expected popped item's name to be '%s', but got '%s'.", p1.name, item_popped.name);
+        if (persons.count != 0)
+            Return_Error("expected an empty Stack, but it has '%zu' item(s).", persons.count);
+    }
+
+    if (persons.count != 0) 
+        Return_Error("expected an empty Stack, but it has '%zu' item(s).", persons.count);
+
+#ifdef Tests_Debug_Trace
+    printf("DynamicArray_test_pop: ----------------------------\n");
+    DynamicArray_print(&persons);
+    printf("\nPersons:\n");
+    DynamicArray_foreach(Person, &persons, person) {
+        printf("  Person #%zu: \n", person.i);
+        printf("    Id:      %d\n", person.item->id);
+        printf("    Name:    %s\n", person.item->name);
+        printf("    Height:  %f\n", person.item->height);
+        printf("    Gender:  %s\n", person.item->gender == Gender_Male ? "Male" : "Female");
+    }
+    printf("-------------------------------------------------------\n");
+#endif // Tests_Debug_Trace
 
     return true;
 }

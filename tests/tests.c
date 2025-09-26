@@ -76,6 +76,16 @@ int main(int argc, char* argv[]) {
     else 
         Log_Error("DynamicArray_test_append_string_ptr() - %s\n", error_msg);  
 
+    if (DynamicArray_test_push(error_msg, Error_Msg_Length))
+        Log_Success("DynamicArray_test_push()\n");
+    else 
+        Log_Error("DynamicArray_test_push() - %s\n", error_msg);  
+
+    if (DynamicArray_test_pop(error_msg, Error_Msg_Length))
+        Log_Success("DynamicArray_test_pop()\n");
+    else 
+        Log_Error("DynamicArray_test_pop() - %s\n", error_msg);  
+
     // Linked List 
     //
     if (LinkedList_test_push(error_msg, Error_Msg_Length))

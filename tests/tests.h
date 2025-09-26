@@ -98,7 +98,8 @@ struct Person {
 )
 
 typedef struct {
-    DynamicArrayHeader;
+    size_t count; 
+    size_t capacity; 
     Person* items;
 } DynamicArrayPerson;
 
@@ -137,8 +138,6 @@ bool Stack_test_push(char* out_error_msg, int error_msg_length);
 bool Stack_test_pop(char* out_error_msg, int error_msg_length);
 bool Stack_test_peek(char* out_error_msg, int error_msg_length);
 
-// TODO: change implementation
-//
 bool StackPointer_test_init(char* out_error_msg, int error_msg_length);
 bool StackPointer_test_push(char* out_error_msg, int error_msg_length);
 bool StackPointer_test_pop(char* out_error_msg, int error_msg_length);
